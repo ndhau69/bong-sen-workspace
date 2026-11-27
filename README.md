@@ -38,10 +38,10 @@ npm run dev
 
 ## 4. Hosting trên Cloudflare Pages & Domain riêng
 
-- **Production URL:** https://bong-sen-workspace.pages.dev
-- **Custom Domain:** https://ws.thuebongsen.online (trỏ CNAME `ws` → `bong-sen-workspace.pages.dev` tại Tenten DNS)
-- **GitHub:** Chỉ dùng để lưu trữ mã nguồn và chạy snapshot backup (`.github/workflows/backup-snapshot.yml`).
-- Để Cloudflare Pages tự động build mỗi khi push code lên GitHub: mở **Cloudflare Dashboard → Workers & Pages → bong-sen-workspace → Settings → Build & deployments → Connect to Git** (chọn repo `ndhau69/bong-sen-workspace`, nhánh `main`, build command `npm run build`, output `dist`).
+- **Domain chính thức:** https://ws.thuebongsen.online (đã trỏ CNAME `ws` → `bong-sen-workspace.pages.dev` tại Tenten DNS, SSL Active)
+- **Tài liệu Tổng quan Hệ thống (Public):** https://ws.thuebongsen.online/system-overview.html
+- **Cloudflare Pages URL:** https://bong-sen-workspace.pages.dev
+- **GitHub:** Dùng để lưu trữ mã nguồn, chạy snapshot backup (`.github/workflows/backup-snapshot.yml`) và kết nối tự động build lên Cloudflare Pages (`bong-sen-workspace` → `ndhau69/bong-sen-workspace`, nhánh `main`, build command `npm run build`, output `dist`).
 
 ## 5. Backup tự động Source Code (Local & GitHub)
 

@@ -39,6 +39,8 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+        globIgnores: ['**/node_modules/**/*', 'sw.js', 'workbox-*.js', 'system-overview.html'],
+        navigateFallbackDenylist: [/^\/system-overview/],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/.*\.supabase\.co\/(rest|auth|storage)\/.*/i,

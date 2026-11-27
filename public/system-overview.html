@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="icon" type="image/png" href="/logo.png" />
+  <title>Tổng Quan Hệ Thống — Bông Sen Accounting Workspace</title>
+  <style>
+    :root {
+      --primary: #1d4ed8;
+      --primary-light: #eff6ff;
+      --accent: #16a34a;
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --text: #0f172a;
+      --muted: #475569;
+      --border: #e2e8f0;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Be Vietnam Pro", "Segoe UI", system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 32px 16px;
+    }
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+    }
+    header {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.05);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--primary-light);
+      color: var(--primary);
+      border: 1px solid #bfdbfe;
+    }
+    .badge.green {
+      background: #dcfce7;
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+    h1 {
+      margin: 8px 0 4px;
+      font-size: 24px;
+      color: #0f172a;
+    }
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 22px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+      margin-bottom: 20px;
+    }
+    .grid .card {
+      margin-bottom: 0;
+    }
+    h2 {
+      margin: 0 0 14px;
+      font-size: 17px;
+      color: var(--primary);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    h3 {
+      margin: 0 0 8px;
+      font-size: 15px;
+      color: var(--text);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    th, td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+    th {
+      background: #f1f5f9;
+      font-weight: 600;
+      color: #334155;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      color: #1e293b;
+    }
+    a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    ul, ol {
+      margin: 8px 0 0;
+      padding-left: 20px;
+      font-size: 14px;
+      color: #334155;
+    }
+    li {
+      margin-bottom: 6px;
+    }
+    .note {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      color: #92400e;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      margin-top: 12px;
+    }
+    .arch-box {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 10px;
+      padding: 16px;
+      font-family: ui-monospace, Consolas, monospace;
+      font-size: 13px;
+      white-space: pre-wrap;
+      line-height: 1.5;
+      color: #1e293b;
+    }
+    footer {
+      text-align: center;
+      color: #64748b;
+      font-size: 12.5px;
+      margin-top: 28px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <span class="badge">Tài liệu Hệ thống Nội bộ</span>
+        <span class="badge green">Phiên bản ổn định: v1.0</span>
+        <h1>BÔNG SEN ACCOUNTING — WORKSPACE</h1>
+        <p class="subtitle">Hệ thống Web App (PWA) Quản lý Khách hàng, Hồ sơ Dịch vụ, Quy trình, Tài chính &amp; Tài liệu</p>
+      </div>
+      <div style="text-align: right; font-size: 13px; color: #475569;">
+        <div><strong>Đơn vị:</strong> Công ty TNHH TM-DV Kế Toán Bông Sen</div>
+        <div><strong>Cập nhật:</strong> 27/11/2026</div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <h3>1. Hosting &amp; Tên miền</h3>
+        <ul>
+          <li><strong>Nền tảng Host:</strong> Cloudflare Pages</li>
+          <li><strong>Domain chính thức:</strong> <a href="https://ws.thuebongsen.online" target="_blank">https://ws.thuebongsen.online</a> <em>(Đã kích hoạt SSL &amp; chạy chính thức)</em></li>
+          <li><strong>Tài liệu hệ thống (Public):</strong> <a href="https://ws.thuebongsen.online/system-overview.html" target="_blank">ws.thuebongsen.online/system-overview.html</a></li>
+          <li><strong>Link gốc Cloudflare:</strong> <a href="https://bong-sen-workspace.pages.dev" target="_blank">bong-sen-workspace.pages.dev</a></li>
+          <li><strong>Chạy trên thiết bị:</strong> Web Desktop + PWA cài đặt iOS / Android / Windows</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>2. Backend &amp; Database</h3>
+        <ul>
+          <li><strong>Nền tảng:</strong> Supabase (Singapore <code>ap-southeast-1</code>)</li>
+          <li><strong>Project ID:</strong> <code>dxobjmlpavwnyypuoixa</code></li>
+          <li><strong>Database:</strong> PostgreSQL (21 bảng + RLS + Triggers)</li>
+          <li><strong>Auth &amp; Storage:</strong> Supabase Auth + Bucket riêng <code>case-documents</code></li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>3. Mã nguồn &amp; Backup</h3>
+        <ul>
+          <li><strong>Thư mục máy local:</strong> <code>d:\bong-sen-workspace</code></li>
+          <li><strong>GitHub Repo:</strong> <a href="https://github.com/ndhau69/bong-sen-workspace" target="_blank">ndhau69/bong-sen-workspace</a> (chỉ lưu source)</li>
+          <li><strong>Mốc ổn định:</strong> Tag <code>v1.0</code> (nhánh <code>main</code>)</li>
+          <li><strong>Backup ZIP local:</strong> <code>d:\Backup\bong-sen-workspace\</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Sơ đồ Kiến trúc Vận hành</h2>
+      <div class="arch-box">Người dùng (Chrome / Edge / Safari iPhone PWA)
+   │
+   ├──► Cloudflare Pages (https://ws.thuebongsen.online | bong-sen-workspace.pages.dev)
+   │       └─ Tự động build &amp; deploy khi nhánh main trên GitHub có thay đổi
+   │
+   └──► Supabase Cloud (https://dxobjmlpavwnyypuoixa.supabase.co)
+           ├─ Supabase Auth      : Đăng nhập Tên đăng nhập (email) &amp; Mật khẩu
+           ├─ PostgreSQL + RLS   : Lưu dữ liệu &amp; kiểm tra quyền từng dòng theo Role / User
+           ├─ Supabase Storage   : Lưu file PDF, Word, Excel, Ảnh (Private + Signed URL)
+           ├─ Supabase Realtime  : Đồng bộ Kanban &amp; Thông báo tức thì
+           └─ Edge Functions     : manage-employee (tạo/sửa user), sync-google-sheets
+
+Code Source: d:\bong-sen-workspace ──(git push)──► GitHub (ndhau69/bong-sen-workspace)
+                                      │                    ├─► Backup Artifact (90 ngày)
+                                      └─(pre-push hook)    └─► Cloudflare Pages Auto-Build
+                                           └─► d:\Backup\bong-sen-workspace\*.zip</div>
+    </div>
+
+    <div class="card">
+      <h2>Chi tiết Hạ tầng, Tài khoản &amp; Liên kết Quản trị</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Thành phần</th>
+            <th>Nhà cung cấp</th>
+            <th>Thông số / Đường dẫn</th>
+            <th>Ghi chú</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Web Hosting (Frontend/PWA)</strong></td>
+            <td>Cloudflare Pages</td>
+            <td>
+              Project: <code>bong-sen-workspace</code><br />
+              URL: <a href="https://bong-sen-workspace.pages.dev" target="_blank">https://bong-sen-workspace.pages.dev</a><br />
+              Account ID: <code>abfa1b308f72d9c9c41e146d1108f6b3</code>
+            </td>
+            <td>Auto-deploy từ nhánh <code>main</code> GitHub; cấu hình Security Headers tại <code>public/_headers</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Tên miền (Custom Domain)</strong></td>
+            <td>Tenten DNS → Cloudflare Pages</td>
+            <td>
+              Domain chính thức: <a href="https://ws.thuebongsen.online" target="_blank"><code>https://ws.thuebongsen.online</code></a> <strong>(Đã hoạt động chính thức — SSL Active)</strong><br />
+              CNAME: <code>ws</code> → <code>bong-sen-workspace.pages.dev</code><br />
+              NS Tenten: <code>ns-a1.tenten.vn</code>, <code>ns-a2.tenten.vn</code>, <code>ns-a3.tenten.vn</code>
+            </td>
+            <td>Đã trỏ CNAME tại Tenten DNS và kích hoạt SSL thành công trên Cloudflare Pages.</td>
+          </tr>
+          <tr>
+            <td><strong>Database &amp; Backend</strong></td>
+            <td>Supabase</td>
+            <td>
+              Project Ref: <code>dxobjmlpavwnyypuoixa</code><br />
+              URL: <code>https://dxobjmlpavwnyypuoixa.supabase.co</code><br />
+              Region: <code>ap-southeast-1</code> (Singapore)
+            </td>
+            <td>Chạy PostgreSQL + RLS + Triggers + Storage + Realtime + 2 Edge Functions.</td>
+          </tr>
+          <tr>
+            <td><strong>Lưu trữ Mã nguồn</strong></td>
+            <td>GitHub</td>
+            <td>
+              Repo: <a href="https://github.com/ndhau69/bong-sen-workspace" target="_blank">https://github.com/ndhau69/bong-sen-workspace</a><br />
+              Nhánh chính: <code>main</code> | Tag: <code>v1.0</code>
+            </td>
+            <td>Chỉ lưu mã nguồn và backup artifact 90 ngày (<code>backup-snapshot.yml</code>).</td>
+          </tr>
+          <tr>
+            <td><strong>Môi trường Test Local</strong></td>
+            <td>Vite Dev Server</td>
+            <td>
+              Thư mục: <code>d:\bong-sen-workspace</code><br />
+              Lệnh chạy: <code>npm run dev</code> (hoặc port <code>3001</code>)
+            </td>
+            <td>Kết nối trực tiếp Supabase qua file <code>.env.local</code> (không đẩy lên GitHub).</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Công nghệ sử dụng</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Tầng</th>
+            <th>Công nghệ</th>
+            <th>Mục đích</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Frontend</strong></td>
+            <td>React 19 + TypeScript + Vite 6</td>
+            <td>Giao diện SPA tốc độ cao, chặt chẽ về kiểu dữ liệu.</td>
+          </tr>
+          <tr>
+            <td><strong>UI / Styling</strong></td>
+            <td>Tailwind CSS + Radix UI (Shadcn/UI) + Lucide Icons</td>
+            <td>Thiết kế tối giản, hiện đại, responsive Desktop / Tablet / Mobile.</td>
+          </tr>
+          <tr>
+            <td><strong>State &amp; Data</strong></td>
+            <td>TanStack React Query + React Router v7</td>
+            <td>Quản lý cache dữ liệu, đồng bộ tức thì và phân tuyến bảo mật.</td>
+          </tr>
+          <tr>
+            <td><strong>Biểu đồ / Kanban / Excel</strong></td>
+            <td>Recharts, <code>@dnd-kit</code>, SheetJS (<code>xlsx</code>)</td>
+            <td>Biểu đồ Dashboard, bảng Kanban kéo thả 8 cột, Import/Export Excel.</td>
+          </tr>
+          <tr>
+            <td><strong>PWA</strong></td>
+            <td><code>vite-plugin-pwa</code> (Workbox)</td>
+            <td>Cài app lên iOS, Android, Windows; không cache dữ liệu nhạy cảm khi offline.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Cơ sở dữ liệu PostgreSQL &amp; Edge Functions</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Nhóm bảng / Thành phần</th>
+            <th>Tên bảng / Function</th>
+            <th>Chức năng chính</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Nhân sự &amp; Phân quyền</strong></td>
+            <td><code>departments</code>, <code>profiles</code>, <code>role_screen_permissions</code>, <code>user_screen_permissions</code></td>
+            <td>Lưu phòng ban, hồ sơ nhân viên (<code>BSA001</code>...), vai trò và ma trận Show/Hide từng màn hình.</td>
+          </tr>
+          <tr>
+            <td><strong>Khách hàng (CRM)</strong></td>
+            <td><code>customers</code></td>
+            <td>Thông tin doanh nghiệp/HKD, MST, đại diện PL, mã tự động <code>KH-XXXX</code>, xóa mềm.</td>
+          </tr>
+          <tr>
+            <td><strong>Dịch vụ &amp; Quy trình mẫu</strong></td>
+            <td><code>service_categories</code>, <code>services</code>, <code>workflow_templates</code>, <code>workflow_template_steps</code></td>
+            <td>4 nhóm dịch vụ A/B/C/D (23 dịch vụ chuẩn) và cấu hình bước quy trình cho từng dịch vụ.</td>
+          </tr>
+          <tr>
+            <td><strong>Hồ sơ &amp; Công việc</strong></td>
+            <td><code>service_cases</code>, <code>case_steps</code>, <code>case_subtasks</code>, <code>case_comments</code></td>
+            <td>Mã hồ sơ <code>HS-YYYY-XXXX</code>, tự sinh các bước từ mẫu, công việc con, bình luận, khóa xóa hồ sơ đã hoàn thành.</td>
+          </tr>
+          <tr>
+            <td><strong>Tài chính (RLS riêng)</strong></td>
+            <td><code>case_financials</code>, <code>case_payments</code>, <code>case_expenses</code></td>
+            <td>Tách bảng bảo mật, ẩn hoàn toàn với <code>staff</code> tại PostgreSQL, tự tính công nợ còn lại.</td>
+          </tr>
+          <tr>
+            <td><strong>Tài liệu &amp; Hệ thống</strong></td>
+            <td><code>document_folders</code>, <code>documents</code>, <code>document_versions</code>, <code>notifications</code>, <code>audit_logs</code>, <code>integration_sync_logs</code></td>
+            <td>Kho tài liệu Storage, thông báo Realtime, nhật ký thao tác và lịch sử đồng bộ Google Sheets.</td>
+          </tr>
+          <tr>
+            <td><strong>Edge Functions</strong></td>
+            <td><code>manage-employee</code>, <code>sync-google-sheets</code></td>
+            <td>Tạo user / đặt lại mật khẩu an toàn trên server và đồng bộ 1 chiều sang Google Sheets.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size: 13px; color: #475569; margin-top: 10px;">
+        <strong>Migrations đã áp dụng:</strong> <code>0001_schema.sql</code> → <code>0005_seed_data.sql</code>, <code>0007_sync_logs.sql</code>, <code>0008_security_hardening</code>, <code>0009_screen_permissions.sql</code>.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>11 Phân hệ &amp; Tài khoản Quản trị ban đầu</h2>
+      <div class="grid" style="margin-bottom: 0;">
+        <div>
+          <h3>Các màn hình nghiệp vụ</h3>
+          <ol>
+            <li><strong>Dashboard:</strong> KPI quản trị &amp; 4 biểu đồ thống kê.</li>
+            <li><strong>Khách hàng (CRM):</strong> Chi tiết 360°, Import Excel / Google Sheets.</li>
+            <li><strong>Hồ sơ dịch vụ:</strong> Tạo, lọc, theo dõi tiến độ &amp; công nợ.</li>
+            <li><strong>Công việc:</strong> Theo dõi bước xử lý, cảnh báo sắp hạn/quá hạn.</li>
+            <li><strong>Kanban:</strong> Kéo thả 8 cột trạng thái + Realtime.</li>
+            <li><strong>Nhân viên:</strong> Hiệu suất phụ trách theo nhân sự.</li>
+            <li><strong>Tài chính:</strong> Hợp đồng, đặt cọc, thu tiền, chi phí, công nợ.</li>
+            <li><strong>Tài liệu:</strong> Thư mục, upload, xem trước PDF/Ảnh, phân quyền.</li>
+            <li><strong>Báo cáo:</strong> 6 báo cáo lọc đa điều kiện + Xuất Excel.</li>
+            <li><strong>Cài đặt:</strong> Dịch vụ, quy trình mẫu, phòng ban, Audit Log, Google Sheets.</li>
+            <li><strong>User &amp; Phân quyền:</strong> Tạo/Sửa User, Show/Hide màn hình theo Role &amp; từng User.</li>
+          </ol>
+        </div>
+        <div>
+          <h3>Tài khoản Admin hiện có</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Mã NV</th>
+                <th>Họ tên</th>
+                <th>Tên đăng nhập</th>
+                <th>Vai trò</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>BSA001</code></td>
+                <td>Nguyễn Đình Hậu</td>
+                <td><code>hau.nguyen</code></td>
+                <td>Admin</td>
+              </tr>
+              <tr>
+                <td><code>BSA002</code></td>
+                <td>Phạm Thị Hoài Nhi</td>
+                <td><code>nhi.pham</code></td>
+                <td>Admin</td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="note">
+            <strong>Lưu ý bảo mật:</strong> Tài liệu này không lưu mật khẩu hay API Secret Key. Tài khoản nhập tên đăng nhập ngắn (không có <code>@</code>) sẽ tự gắn hậu tố <code>@ketoanbongsen.vn</code> khi xác thực Supabase Auth.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Quy trình Cập nhật, Backup &amp; Rollback</h2>
+      <ul>
+        <li><strong>Chạy test local:</strong> <code>cd d:\bong-sen-workspace &amp;&amp; npm run dev</code> (kiểm tra trước khi đẩy).</li>
+        <li><strong>Đẩy code &amp; Deploy:</strong> <code>git add . &amp;&amp; git commit -m "..." &amp;&amp; git push origin main</code>
+          <ul>
+            <li>Tự động tạo file <code>.zip</code> backup vào <code>d:\Backup\bong-sen-workspace\</code> (qua <code>.git/hooks/pre-push</code>).</li>
+            <li>Tự động lưu code &amp; snapshot 90 ngày trên GitHub.</li>
+            <li>Cloudflare Pages tự động build và phát hành bản mới lên <code>https://ws.thuebongsen.online</code> (và <code>bong-sen-workspace.pages.dev</code>).</li>
+          </ul>
+        </li>
+        <li><strong>Rollback khi cần:</strong>
+          <ul>
+            <li>Quay về mốc chuẩn đầu tiên: yêu cầu rollback về tag <code>v1.0</code> trên GitHub.</li>
+            <li>Quay về thời điểm bất kỳ: chọn file <code>.zip</code> theo ngày giờ trong <code>d:\Backup\bong-sen-workspace\</code> hoặc rollback trực tiếp deployment trên Cloudflare Pages.</li>
+            <li><strong>Lưu ý Database:</strong> Rollback code không tự hoàn tác dữ liệu đã nhập trong PostgreSQL; nên xuất Excel hoặc đồng bộ Google Sheets định kỳ để sao lưu dữ liệu nghiệp vụ.</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <footer>
+      Tài liệu được tạo cho Công ty TNHH TM-DV Kế Toán Bông Sen — Public URL: <a href="https://ws.thuebongsen.online/system-overview.html" target="_blank">https://ws.thuebongsen.online/system-overview.html</a> | Local: <code>d:\bong-sen-workspace\docs\SYSTEM_OVERVIEW.html</code>
+    </footer>
+  </div>
+</body>
+</html>
