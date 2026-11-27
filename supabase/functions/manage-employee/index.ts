@@ -55,9 +55,9 @@ Deno.serve(async (req) => {
     const { action } = body
 
     if (action === 'create') {
-      const { email, password, full_name, phone, role, department_id, job_title } = body
+      const { email, password, full_name, phone, role, department_id, job_title, employee_code } = body
       if (!email || !password || !full_name) {
-        return new Response(JSON.stringify({ error: 'Email, mật khẩu và họ tên là bắt buộc' }), {
+        return new Response(JSON.stringify({ error: 'Tên đăng nhập, mật khẩu và họ tên là bắt buộc' }), {
           status: 400,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         })
@@ -71,11 +71,17 @@ Deno.serve(async (req) => {
       })
       if (createErr) throw createErr
 
-      if (department_id && created.user) {
-        await adminClient
-          .from('profiles')
-          .update({ department_id, phone, job_title, role: role ?? 'staff' })
-          .eq('id', created.user.id)
+      if (created.user) {
+        const profilePatch: Record<string, unknown> = {
+          role: role ?? 'staff',
+          phone: phone || null,
+          job_title: job_title || null,
+        }
+        if (department_id) profilePatch.department_id = department_id
+        if (employee_code && String(employee_code).trim()) {
+          profilePatch.employee_code = String(employee_code).trim()
+        }
+        await adminClient.from('profiles').update(profilePatch).eq('id', created.user.id)
       }
 
       return new Response(JSON.stringify({ user: created.user }), {

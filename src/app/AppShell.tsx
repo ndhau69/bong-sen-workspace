@@ -11,6 +11,7 @@ import {
   Files,
   BarChart3,
   Settings,
+  ShieldCheck,
   Search,
   Menu,
   X,
@@ -19,6 +20,8 @@ import {
   WifiOff
 } from 'lucide-react'
 import { useAuth } from '@/features/auth/AuthContext'
+import { useScreenPermissions } from '@/features/users/useScreenPermissions'
+import type { ScreenKey } from '@/features/users/screenConfig'
 import { Permissions } from '@/lib/permissions'
 import { ROLE_SHORT_LABELS } from '@/lib/formatters'
 import { NotificationBell } from '@/features/notifications/NotificationBell'
@@ -38,6 +41,7 @@ import { toast } from 'sonner'
 import { cn } from '@/lib/utils'
 
 interface NavItem {
+  key: ScreenKey
   to: string
   label: string
   icon: React.ComponentType<{ className?: string }>
@@ -46,6 +50,7 @@ interface NavItem {
 
 export function AppShell() {
   const { profile, signOut } = useAuth()
+  const { isScreenVisible } = useScreenPermissions()
   const navigate = useNavigate()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [globalSearch, setGlobalSearch] = useState('')
@@ -65,18 +70,32 @@ export function AppShell() {
     }
   }, [])
 
-  const navItems: NavItem[] = [
-    { to: '/', label: 'Dashboard', icon: LayoutDashboard, visible: true },
-    { to: '/customers', label: 'Khách hàng', icon: Users, visible: true },
-    { to: '/cases', label: 'Hồ sơ dịch vụ', icon: Briefcase, visible: true },
-    { to: '/tasks', label: 'Công việc', icon: CheckSquare, visible: true },
-    { to: '/kanban', label: 'Kanban', icon: FolderKanban, visible: true },
-    { to: '/employees', label: 'Nhân viên', icon: UserCog, visible: true },
-    { to: '/finance', label: 'Tài chính', icon: Wallet, visible: Permissions.canViewFinance(profile?.role) },
-    { to: '/documents', label: 'Tài liệu', icon: Files, visible: true },
-    { to: '/reports', label: 'Báo cáo', icon: BarChart3, visible: true },
-    { to: '/settings', label: 'Cài đặt', icon: Settings, visible: true }
-  ].filter((item) => item.visible)
+  const allNavItems: NavItem[] = [
+    { key: 'dashboard', to: '/', label: 'Dashboard', icon: LayoutDashboard, visible: isScreenVisible('dashboard') },
+    { key: 'customers', to: '/customers', label: 'Khách hàng', icon: Users, visible: isScreenVisible('customers') },
+    { key: 'cases', to: '/cases', label: 'Hồ sơ dịch vụ', icon: Briefcase, visible: isScreenVisible('cases') },
+    { key: 'tasks', to: '/tasks', label: 'Công việc', icon: CheckSquare, visible: isScreenVisible('tasks') },
+    { key: 'kanban', to: '/kanban', label: 'Kanban', icon: FolderKanban, visible: isScreenVisible('kanban') },
+    { key: 'employees', to: '/employees', label: 'Nhân viên', icon: UserCog, visible: isScreenVisible('employees') },
+    {
+      key: 'finance',
+      to: '/finance',
+      label: 'Tài chính',
+      icon: Wallet,
+      visible: Permissions.canViewFinance(profile?.role) && isScreenVisible('finance')
+    },
+    { key: 'documents', to: '/documents', label: 'Tài liệu', icon: Files, visible: isScreenVisible('documents') },
+    { key: 'reports', to: '/reports', label: 'Báo cáo', icon: BarChart3, visible: isScreenVisible('reports') },
+    { key: 'settings', to: '/settings', label: 'Cài đặt', icon: Settings, visible: isScreenVisible('settings') },
+    {
+      key: 'user_access',
+      to: '/user-access',
+      label: 'User & Phân quyền',
+      icon: ShieldCheck,
+      visible: profile?.role === 'admin' && isScreenVisible('user_access')
+    }
+  ]
+  const navItems = allNavItems.filter((item) => item.visible)
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -104,12 +123,15 @@ export function AppShell() {
 
   const sidebarContent = (
     <div className="flex h-full flex-col bg-white border-r border-slate-200">
-      <div className="flex items-center gap-2.5 px-5 py-4 border-b border-slate-100">
-        <img src={`${import.meta.env.BASE_URL}logo.png`} alt="Bông Sen" className="h-9 w-9 rounded-lg object-contain bg-blue-50 p-1" />
-        <div className="min-w-0">
-          <div className="text-sm font-bold text-slate-900 truncate">BÔNG SEN</div>
-          <div className="text-[11px] font-medium text-primary truncate">WORKSPACE</div>
-        </div>
+      <div className="flex items-center gap-2.5 px-4 py-3.5 border-b border-slate-100">
+        <img
+          src={`${import.meta.env.BASE_URL}logo.png`}
+          alt="Bông Sen Accounting"
+          className="h-8 w-auto shrink-0 object-contain"
+        />
+        <span className="border-l border-slate-200 pl-2 text-[10px] font-semibold tracking-[0.12em] text-primary uppercase whitespace-nowrap">
+          WORKSPACE
+        </span>
       </div>
 
       <nav className="flex-1 overflow-y-auto px-3 py-3 space-y-1">
@@ -247,11 +269,13 @@ export function AppShell() {
         {/* Mobile Bottom Nav (4 lối tắt chính + Menu) */}
         <nav className="fixed bottom-0 inset-x-0 z-30 bg-white border-t border-slate-200 lg:hidden grid grid-cols-5 h-14 pb-[env(safe-area-inset-bottom)]">
           {[
-            { to: '/', label: 'Tổng quan', icon: LayoutDashboard },
-            { to: '/customers', label: 'Khách hàng', icon: Users },
-            { to: '/cases', label: 'Hồ sơ', icon: Briefcase },
-            { to: '/kanban', label: 'Kanban', icon: FolderKanban }
-          ].map((item) => {
+            { key: 'dashboard' as ScreenKey, to: '/', label: 'Tổng quan', icon: LayoutDashboard },
+            { key: 'customers' as ScreenKey, to: '/customers', label: 'Khách hàng', icon: Users },
+            { key: 'cases' as ScreenKey, to: '/cases', label: 'Hồ sơ', icon: Briefcase },
+            { key: 'kanban' as ScreenKey, to: '/kanban', label: 'Kanban', icon: FolderKanban }
+          ]
+            .filter((item) => isScreenVisible(item.key))
+            .map((item) => {
             const Icon = item.icon
             return (
               <NavLink

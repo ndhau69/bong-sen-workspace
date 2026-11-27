@@ -144,3 +144,14 @@ export function formatFileSize(bytes: number): string {
   const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1)
   return `${(bytes / Math.pow(1024, i)).toFixed(i === 0 ? 0 : 1)} ${units[i]}`
 }
+
+export function normalizeLoginIdentifier(raw: string): string {
+  const trimmed = raw.trim().toLowerCase()
+  if (!trimmed) return ''
+  return trimmed.includes('@') ? trimmed : `${trimmed}@ketoanbongsen.vn`
+}
+
+export function formatLoginDisplay(email: string | null | undefined): string {
+  if (!email) return ''
+  return email.replace(/@ketoanbongsen\.vn$/i, '')
+}

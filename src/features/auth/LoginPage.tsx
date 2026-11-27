@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Navigate } from 'react-router-dom'
-import { Lock, Mail, Eye, EyeOff, ShieldCheck } from 'lucide-react'
+import { Lock, User, Eye, EyeOff, ShieldCheck } from 'lucide-react'
 import { useAuth } from './AuthContext'
+import { normalizeLoginIdentifier } from '@/lib/formatters'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -23,7 +24,7 @@ export function LoginPage() {
     e.preventDefault()
     setErrorMsg(null)
     setSubmitting(true)
-    const { error } = await signIn(email.trim(), password)
+    const { error } = await signIn(normalizeLoginIdentifier(email), password)
     if (error) setErrorMsg(error)
     setSubmitting(false)
   }
@@ -31,11 +32,12 @@ export function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-slate-100 flex flex-col justify-center items-center p-4">
       <div className="w-full max-w-md space-y-6">
-        <div className="text-center space-y-2">
-          <div className="mx-auto h-14 w-14 rounded-2xl bg-white shadow-sm border border-blue-100 flex items-center justify-center p-2">
-            <img src={`${import.meta.env.BASE_URL}logo.png`} alt="Bông Sen Accounting" className="h-full w-full object-contain" />
-          </div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">BÔNG SEN WORKSPACE</h1>
+        <div className="text-center space-y-2.5">
+          <img
+            src={`${import.meta.env.BASE_URL}logo.png`}
+            alt="Bông Sen Accounting"
+            className="h-14 w-auto mx-auto object-contain"
+          />
           <p className="text-xs text-slate-500">
             Hệ thống Quản lý Khách hàng, Hồ sơ &amp; Tài chính Nội bộ
           </p>
@@ -57,15 +59,15 @@ export function LoginPage() {
               )}
 
               <div className="space-y-1.5">
-                <Label htmlFor="email">Email công ty</Label>
+                <Label htmlFor="email">Tên đăng nhập</Label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                  <User className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
                   <Input
                     id="email"
-                    type="email"
+                    type="text"
                     required
-                    autoComplete="email"
-                    placeholder="nhanvien@ketoanbongsen.vn"
+                    autoComplete="username"
+                    placeholder="Tên đăng nhập hoặc email công ty"
                     className="pl-9"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}

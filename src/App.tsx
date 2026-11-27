@@ -19,6 +19,7 @@ import { FinancePage } from '@/features/finance/FinancePage'
 import { DocumentsPage } from '@/features/documents/DocumentsPage'
 import { ReportsPage } from '@/features/reports/ReportsPage'
 import { SettingsPage } from '@/features/settings/SettingsPage'
+import { UserAccessPage } from '@/features/users/UserAccessPage'
 import { PwaInstallPrompt } from '@/pwa/PwaInstallPrompt'
 
 const queryClient = new QueryClient({
@@ -48,25 +49,110 @@ export default function App() {
                 </ProtectedRoute>
               }
             >
-              <Route index element={<DashboardPage />} />
-              <Route path="/customers" element={<CustomersPage />} />
-              <Route path="/customers/:id" element={<CustomerDetailPage />} />
-              <Route path="/cases" element={<CasesPage />} />
-              <Route path="/cases/:id" element={<CaseDetailPage />} />
-              <Route path="/tasks" element={<TasksPage />} />
-              <Route path="/kanban" element={<KanbanPage />} />
-              <Route path="/employees" element={<EmployeesPage />} />
+              <Route
+                index
+                element={
+                  <ProtectedRoute screenKey="dashboard">
+                    <DashboardPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/customers"
+                element={
+                  <ProtectedRoute screenKey="customers">
+                    <CustomersPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/customers/:id"
+                element={
+                  <ProtectedRoute screenKey="customers">
+                    <CustomerDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/cases"
+                element={
+                  <ProtectedRoute screenKey="cases">
+                    <CasesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/cases/:id"
+                element={
+                  <ProtectedRoute screenKey="cases">
+                    <CaseDetailPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/tasks"
+                element={
+                  <ProtectedRoute screenKey="tasks">
+                    <TasksPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/kanban"
+                element={
+                  <ProtectedRoute screenKey="kanban">
+                    <KanbanPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/employees"
+                element={
+                  <ProtectedRoute screenKey="employees">
+                    <EmployeesPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/finance"
                 element={
-                  <ProtectedRoute allowedRoles={['admin', 'manager', 'accountant']}>
+                  <ProtectedRoute allowedRoles={['admin', 'manager', 'accountant']} screenKey="finance">
                     <FinancePage />
                   </ProtectedRoute>
                 }
               />
-              <Route path="/documents" element={<DocumentsPage />} />
-              <Route path="/reports" element={<ReportsPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
+              <Route
+                path="/documents"
+                element={
+                  <ProtectedRoute screenKey="documents">
+                    <DocumentsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/reports"
+                element={
+                  <ProtectedRoute screenKey="reports">
+                    <ReportsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute screenKey="settings">
+                    <SettingsPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/user-access"
+                element={
+                  <ProtectedRoute allowedRoles={['admin']} screenKey="user_access">
+                    <UserAccessPage />
+                  </ProtectedRoute>
+                }
+              />
             </Route>
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

@@ -7,9 +7,9 @@ export function SetupRequiredView() {
       <Card className="max-w-2xl w-full border-blue-200 shadow-lg">
         <CardHeader className="border-b border-slate-100 pb-4">
           <div className="flex items-center gap-3">
-            <img src={`${import.meta.env.BASE_URL}logo.png`} alt="Bông Sen" className="h-10 w-10 rounded-lg object-contain bg-blue-50 p-1" />
+            <img src={`${import.meta.env.BASE_URL}logo.png`} alt="Bông Sen Accounting" className="h-10 w-auto object-contain" />
             <div>
-              <CardTitle className="text-xl text-blue-900">Kết nối Supabase để khởi chạy Bông Sen Workspace</CardTitle>
+              <CardTitle className="text-xl text-blue-900">Kết nối Supabase để khởi chạy Bông Sen Accounting</CardTitle>
               <p className="text-xs text-slate-500 mt-1">
                 Hệ thống yêu cầu kết nối PostgreSQL & Supabase Auth thực tế (không dùng dữ liệu giả trên trình duyệt).
               </p>

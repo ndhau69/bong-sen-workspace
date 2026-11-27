@@ -14,7 +14,7 @@ import {
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/features/auth/AuthContext'
 import { Permissions } from '@/lib/permissions'
-import { ROLE_LABELS, ROLE_SHORT_LABELS, formatDate, isOverdue } from '@/lib/formatters'
+import { ROLE_LABELS, ROLE_SHORT_LABELS, formatDate, isOverdue, normalizeLoginIdentifier } from '@/lib/formatters'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -151,6 +151,7 @@ export function EmployeesPage() {
         body: {
           action: 'create',
           ...form,
+          email: normalizeLoginIdentifier(form.email),
           department_id: form.department_id || null
         }
       })
@@ -419,10 +420,11 @@ export function EmployeesPage() {
                 <Input value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
               </div>
               <div className="space-y-1">
-                <Label>Email đăng nhập *</Label>
+                <Label>Tên đăng nhập *</Label>
                 <Input
-                  type="email"
+                  type="text"
                   required
+                  placeholder="minhanh hoặc email"
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
                 />

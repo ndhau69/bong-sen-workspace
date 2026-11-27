@@ -11,10 +11,10 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['logo.png'],
+      includeAssets: ['logo.png', 'pwa-icon.png'],
       manifest: {
-        name: 'Bông Sen Workspace - Quản Lý Kế Toán & Hồ Sơ',
-        short_name: 'Bông Sen WS',
+        name: 'Bông Sen Accounting - Quản Lý Kế Toán & Hồ Sơ',
+        short_name: 'Bông Sen',
         description: 'Hệ thống quản lý khách hàng, hồ sơ dịch vụ, quy trình và tài chính - Công ty TNHH TM-DV Kế Toán Bông Sen',
         theme_color: '#1D4ED8',
         background_color: '#F8FAFC',
@@ -24,13 +24,13 @@ export default defineConfig({
         start_url: base,
         icons: [
           {
-            src: `${base}logo.png`,
+            src: `${base}pwa-icon.png`,
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: `${base}logo.png`,
+            src: `${base}pwa-icon.png`,
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
