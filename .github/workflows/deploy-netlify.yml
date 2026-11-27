@@ -32,6 +32,14 @@ jobs:
         run: npm run build
 
       - name: Deploy prebuilt dist to Netlify
+        uses: nwtgck/actions-netlify@v3.0
+        with:
+          publish-dir: './dist'
+          production-deploy: true
+          deploy-message: 'Deploy from GitHub Actions'
+          enable-pull-request-comment: false
+          enable-commit-comment: false
+          overwrites-pull-request-comment: false
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-        run: npx --yes netlify-cli@latest deploy --prod --dir=dist --site="${{ secrets.NETLIFY_SITE_ID }}"
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
