@@ -45,3 +45,8 @@ Cấu hình 4 Repository Secrets tại **GitHub → Settings → Secrets and var
 - `VITE_SUPABASE_ANON_KEY`
 - `NETLIFY_SITE_ID`
 - `NETLIFY_AUTH_TOKEN` (tạo tại Netlify → User settings → Applications → Personal access tokens)
+
+## 5. Backup tự động Source Code (Local & GitHub)
+
+- **Local (`d:\Backup\bong-sen-workspace\`):** Git hook `.git/hooks/pre-push` tự động chạy `scripts/backup.ps1` mỗi khi `git push` để nén toàn bộ mã nguồn (kèm `.env.local`, loại trừ `node_modules`/`dist`) thành file `.zip` theo timestamp (giữ tối đa 20 bản gần nhất). Cũng có thể chạy tay bằng `npm run backup`.
+- **Cloud (GitHub Actions):** Workflow `.github/workflows/backup-snapshot.yml` tự động nén mã nguồn sạch và lưu Artifact trên GitHub Actions trong 90 ngày mỗi khi push lên `main`.

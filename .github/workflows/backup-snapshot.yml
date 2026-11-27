@@ -1,0 +1,30 @@
+name: Backup Source Snapshot
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create source archive
+        id: archive
+        run: |
+          STAMP=$(date -u +"%Y%m%d-%H%M%S")
+          SHORT_SHA=${GITHUB_SHA::7}
+          FILE="bong-sen-workspace-src-${STAMP}-${SHORT_SHA}.tar.gz"
+          tar --exclude=".git" -czf "/tmp/${FILE}" .
+          echo "filename=${FILE}" >> "$GITHUB_OUTPUT"
+
+      - name: Upload backup artifact (90 days)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.archive.outputs.filename }}
+          path: /tmp/${{ steps.archive.outputs.filename }}
+          retention-days: 90
