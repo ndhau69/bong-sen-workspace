@@ -35,3 +35,13 @@ npm run dev
 - **iOS (Safari):** Mở URL ứng dụng → bấm **Chia sẻ (Share)** → **Thêm vào Màn hình chính (Add to Home Screen)**.
 - **Android / Windows (Chrome / Edge):** Bấm nút **Cài đặt** trên thanh địa chỉ hoặc banner gợi ý góc màn hình.
 - **Bảo mật dữ liệu Offline:** Service Worker chỉ cache App Shell (`NetworkOnly` cho toàn bộ API `/rest/`, `/auth/`, `/storage/` của Supabase) và tự xóa cache khi đăng xuất.
+
+## 4. Tự động Deploy lên Netlify qua GitHub Actions
+
+Workflow `.github/workflows/deploy-netlify.yml` sẽ tự build `dist/` trên GitHub Actions và đẩy bản build sang Netlify mỗi khi push nhánh `main` (không tốn build credit của Netlify).
+
+Cấu hình 4 Repository Secrets tại **GitHub → Settings → Secrets and variables → Actions**:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `NETLIFY_SITE_ID`
+- `NETLIFY_AUTH_TOKEN` (tạo tại Netlify → User settings → Applications → Personal access tokens)
