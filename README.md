@@ -36,15 +36,12 @@ npm run dev
 - **Android / Windows (Chrome / Edge):** Bấm nút **Cài đặt** trên thanh địa chỉ hoặc banner gợi ý góc màn hình.
 - **Bảo mật dữ liệu Offline:** Service Worker chỉ cache App Shell (`NetworkOnly` cho toàn bộ API `/rest/`, `/auth/`, `/storage/` của Supabase) và tự xóa cache khi đăng xuất.
 
-## 4. Tự động Deploy lên Netlify qua GitHub Actions
+## 4. Hosting trên Cloudflare Pages & Domain riêng
 
-Workflow `.github/workflows/deploy-netlify.yml` sẽ tự build `dist/` trên GitHub Actions và đẩy bản build sang Netlify mỗi khi push nhánh `main` (không tốn build credit của Netlify).
-
-Cấu hình 4 Repository Secrets tại **GitHub → Settings → Secrets and variables → Actions**:
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
-- `NETLIFY_SITE_ID`
-- `NETLIFY_AUTH_TOKEN` (tạo tại Netlify → User settings → Applications → Personal access tokens)
+- **Production URL:** https://bong-sen-workspace.pages.dev
+- **Custom Domain:** https://ws.thuebongsen.online (trỏ CNAME `ws` → `bong-sen-workspace.pages.dev` tại Tenten DNS)
+- **GitHub:** Chỉ dùng để lưu trữ mã nguồn và chạy snapshot backup (`.github/workflows/backup-snapshot.yml`).
+- Để Cloudflare Pages tự động build mỗi khi push code lên GitHub: mở **Cloudflare Dashboard → Workers & Pages → bong-sen-workspace → Settings → Build & deployments → Connect to Git** (chọn repo `ndhau69/bong-sen-workspace`, nhánh `main`, build command `npm run build`, output `dist`).
 
 ## 5. Backup tự động Source Code (Local & GitHub)
 
