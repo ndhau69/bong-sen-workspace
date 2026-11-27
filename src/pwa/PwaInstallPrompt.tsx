@@ -44,7 +44,7 @@ export function PwaInstallPrompt() {
 
   return (
     <div className="fixed bottom-16 lg:bottom-4 right-4 z-40 max-w-sm rounded-xl border border-blue-200 bg-white p-3.5 shadow-lg flex items-start gap-3">
-      <img src="/logo.png" alt="Bông Sen" className="h-9 w-9 rounded-lg object-contain bg-blue-50 p-1 shrink-0" />
+      <img src={`${import.meta.env.BASE_URL}logo.png`} alt="Bông Sen" className="h-9 w-9 rounded-lg object-contain bg-blue-50 p-1 shrink-0" />
       <div className="flex-1 text-xs space-y-1.5">
         <div className="font-semibold text-slate-900">Cài đặt Bông Sen Workspace</div>
         {deferredPrompt ? (

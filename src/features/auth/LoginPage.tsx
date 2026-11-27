@@ -33,7 +33,7 @@ export function LoginPage() {
       <div className="w-full max-w-md space-y-6">
         <div className="text-center space-y-2">
           <div className="mx-auto h-14 w-14 rounded-2xl bg-white shadow-sm border border-blue-100 flex items-center justify-center p-2">
-            <img src="/logo.png" alt="Bông Sen Accounting" className="h-full w-full object-contain" />
+            <img src={`${import.meta.env.BASE_URL}logo.png`} alt="Bông Sen Accounting" className="h-full w-full object-contain" />
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-slate-900">BÔNG SEN WORKSPACE</h1>
           <p className="text-xs text-slate-500">

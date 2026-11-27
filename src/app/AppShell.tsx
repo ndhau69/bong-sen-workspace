@@ -105,7 +105,7 @@ export function AppShell() {
   const sidebarContent = (
     <div className="flex h-full flex-col bg-white border-r border-slate-200">
       <div className="flex items-center gap-2.5 px-5 py-4 border-b border-slate-100">
-        <img src="/logo.png" alt="Bông Sen" className="h-9 w-9 rounded-lg object-contain bg-blue-50 p-1" />
+        <img src={`${import.meta.env.BASE_URL}logo.png`} alt="Bông Sen" className="h-9 w-9 rounded-lg object-contain bg-blue-50 p-1" />
         <div className="min-w-0">
           <div className="text-sm font-bold text-slate-900 truncate">BÔNG SEN</div>
           <div className="text-[11px] font-medium text-primary truncate">WORKSPACE</div>

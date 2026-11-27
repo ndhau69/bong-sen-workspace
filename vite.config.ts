@@ -3,12 +3,15 @@ import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
 
+const base = process.env.VITE_BASE_PATH || '/'
+
 export default defineConfig({
+  base,
   plugins: [
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['logo.png', 'apple-touch-icon.png'],
+      includeAssets: ['logo.png'],
       manifest: {
         name: 'Bông Sen Workspace - Quản Lý Kế Toán & Hồ Sơ',
         short_name: 'Bông Sen WS',
@@ -17,17 +20,17 @@ export default defineConfig({
         background_color: '#F8FAFC',
         display: 'standalone',
         orientation: 'any',
-        scope: '/',
-        start_url: '/',
+        scope: base,
+        start_url: base,
         icons: [
           {
-            src: '/logo.png',
+            src: `${base}logo.png`,
             sizes: '192x192',
             type: 'image/png',
             purpose: 'any'
           },
           {
-            src: '/logo.png',
+            src: `${base}logo.png`,
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable'
@@ -38,7 +41,6 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
         runtimeCaching: [
           {
-            // Không cache API dữ liệu nhạy cảm của Supabase ở Service Worker
             urlPattern: /^https:\/\/.*\.supabase\.co\/(rest|auth|storage)\/.*/i,
             handler: 'NetworkOnly'
           }
