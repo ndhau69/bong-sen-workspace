@@ -65,12 +65,48 @@ export interface Profile {
   department?: Department | null
 }
 
+export type CustomerFieldType =
+  | 'text'
+  | 'textarea'
+  | 'number'
+  | 'date'
+  | 'select'
+  | 'phone'
+  | 'email'
+
+export interface CustomerPicOption {
+  id: string
+  name: string
+  color: string
+  sort_order: number
+  is_active: boolean
+  created_at: string
+  updated_at: string
+}
+
+export interface CustomerColumnConfig {
+  id: string
+  column_key: string
+  label: string
+  field_type: CustomerFieldType
+  is_system: boolean
+  is_visible: boolean
+  sort_order: number
+  options: string[]
+  created_at: string
+  updated_at: string
+}
+
 export interface Customer {
   id: string
   customer_code: string
+  sheet_no: string | null
   company_name: string
+  identity_number: string | null
   tax_code: string | null
   business_type: BusinessType
+  pic_name: string | null
+  operating_status: string | null
   legal_representative: string | null
   phone: string | null
   email: string | null
@@ -79,6 +115,7 @@ export interface Customer {
   established_date: string | null
   assigned_staff_id: string | null
   notes: string | null
+  custom_fields: Record<string, string | null> | null
   deleted_at: string | null
   created_by: string | null
   created_at: string

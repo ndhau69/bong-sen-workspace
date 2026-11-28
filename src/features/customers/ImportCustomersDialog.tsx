@@ -16,11 +16,15 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { toast } from 'sonner'
-import type { BusinessType } from '@/types/database'
+import type { BusinessType, CustomerColumnConfig } from '@/types/database'
 
 interface ParsedCustomerRow {
+  sheet_no: string | null
   company_name: string
+  identity_number: string | null
   tax_code: string | null
+  pic_name: string | null
+  operating_status: string | null
   business_type: BusinessType
   legal_representative: string | null
   phone: string | null
@@ -28,19 +32,25 @@ interface ParsedCustomerRow {
   headquarters_address: string | null
   business_lines: string | null
   notes: string | null
+  custom_fields: Record<string, string>
 }
 
-function normalizeBusinessType(raw: unknown): BusinessType {
+function normalizeBusinessType(raw: unknown, companyName: string): BusinessType {
   const val = String(raw || '').toLowerCase().trim()
   if (val.includes('1tv') || val.includes('1 thành viên') || val.includes('một thành viên')) return 'tnhh_1tv'
   if (val.includes('2tv') || val.includes('2 thành viên') || val.includes('hai thành viên')) return 'tnhh_2tv'
   if (val.includes('cổ phần') || val.includes('co_phan') || val.includes('cp')) return 'co_phan'
   if (val.includes('tư nhân') || val.includes('tu_nhan') || val.includes('dntn')) return 'tu_nhan'
-  if (val.includes('hộ') || val.includes('hkd') || val.includes('kinh doanh')) return 'ho_kinh_doanh'
-  return 'other'
+  if (val.includes('hộ') || val.includes('hkd') || val.includes('kinh doanh') || /^hộ\s/i.test(companyName)) {
+    return 'ho_kinh_doanh'
+  }
+  return 'tnhh_1tv'
 }
 
-function mapRawRow(row: Record<string, unknown>): ParsedCustomerRow | null {
+function mapRawRow(
+  row: Record<string, unknown>,
+  customColumns: CustomerColumnConfig[]
+): ParsedCustomerRow | null {
   const get = (...keys: string[]) => {
     for (const k of keys) {
       const foundKey = Object.keys(row).find((rk) => rk.trim().toLowerCase() === k.toLowerCase())
@@ -51,19 +61,37 @@ function mapRawRow(row: Record<string, unknown>): ParsedCustomerRow | null {
     return null
   }
 
-  const companyName = get('Tên doanh nghiệp', 'Ten doanh nghiep', 'company_name', 'Tên công ty', 'Khách hàng')
+  const companyName = get(
+    'Doanh nghiệp',
+    'Tên doanh nghiệp',
+    'Ten doanh nghiep',
+    'company_name',
+    'Tên công ty',
+    'Khách hàng'
+  )
   if (!companyName) return null
 
+  const customFields: Record<string, string> = {}
+  for (const col of customColumns) {
+    const val = get(col.label, col.column_key)
+    if (val) customFields[col.column_key] = val
+  }
+
   return {
+    sheet_no: get('No.', 'No', 'STT', 'sheet_no'),
     company_name: companyName,
-    tax_code: get('Mã số thuế', 'Ma so thue', 'MST', 'tax_code'),
-    business_type: normalizeBusinessType(get('Loại hình', 'Loai hinh', 'business_type')),
-    legal_representative: get('Người đại diện', 'Nguoi dai dien', 'Đại diện PL', 'legal_representative'),
-    phone: get('Số điện thoại', 'So dien thoai', 'SĐT', 'SDT', 'phone'),
+    identity_number: get('Số định danh', 'So dinh danh', 'CCCD', 'CMND', 'identity_number'),
+    tax_code: get('MST', 'Mã số thuế', 'Ma so thue', 'tax_code'),
+    pic_name: get('PIC', 'pic_name', 'Phụ trách'),
+    operating_status: get('Trạng thái', 'Trang thai', 'operating_status') || 'Đang hoạt động',
+    business_type: normalizeBusinessType(get('Loại hình', 'Loai hinh', 'Loại hình DN', 'business_type'), companyName),
+    legal_representative: get('Chủ DN', 'Chu DN', 'Người đại diện', 'Nguoi dai dien', 'Đại diện PL', 'legal_representative'),
+    phone: get('SĐT', 'SDT', 'Số điện thoại', 'So dien thoai', 'phone'),
     email: get('Email', 'email'),
     headquarters_address: get('Địa chỉ', 'Dia chi', 'Địa chỉ trụ sở', 'headquarters_address'),
     business_lines: get('Ngành nghề', 'Nganh nghe', 'business_lines'),
-    notes: get('Ghi chú', 'Ghi chu', 'notes')
+    notes: get('Ghi chú', 'Ghi chu', 'notes'),
+    custom_fields: customFields
   }
 }
 
@@ -78,10 +106,12 @@ function toGoogleSheetCsvUrl(url: string): string | null {
 
 export function ImportCustomersDialog({
   open,
-  onOpenChange
+  onOpenChange,
+  customColumns = []
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
+  customColumns?: CustomerColumnConfig[]
 }) {
   const { profile } = useAuth()
   const queryClient = useQueryClient()
@@ -93,10 +123,12 @@ export function ImportCustomersDialog({
 
   const parseWorkbook = (wb: XLSX.WorkBook) => {
     const firstSheet = wb.Sheets[wb.SheetNames[0]]
-    const json = XLSX.utils.sheet_to_json<Record<string, unknown>>(firstSheet, { defval: '' })
-    const mapped = json.map(mapRawRow).filter((r): r is ParsedCustomerRow => r !== null)
+    const json = XLSX.utils.sheet_to_json<Record<string, unknown>>(firstSheet, { defval: '', raw: false })
+    const mapped = json
+      .map((r) => mapRawRow(r, customColumns))
+      .filter((r): r is ParsedCustomerRow => r !== null)
     if (mapped.length === 0) {
-      setParseError('Không tìm thấy dữ liệu hợp lệ. Cần có cột "Tên doanh nghiệp".')
+      setParseError('Không tìm thấy dữ liệu hợp lệ. Cần có cột "Doanh nghiệp" hoặc "Tên doanh nghiệp".')
       setParsedRows([])
       return
     }
@@ -129,7 +161,9 @@ export function ImportCustomersDialog({
     try {
       const res = await fetch(csvUrl)
       if (!res.ok) {
-        throw new Error('Không tải được Google Sheet. Hãy đảm bảo Sheet đang bật quyền "Bất kỳ ai có đường liên kết đều xem được".')
+        throw new Error(
+          'Không tải được Google Sheet. Hãy đảm bảo Sheet đang bật quyền "Bất kỳ ai có đường liên kết đều xem được".'
+        )
       }
       const csvText = await res.text()
       const wb = XLSX.read(csvText, { type: 'string' })
@@ -142,22 +176,24 @@ export function ImportCustomersDialog({
   }
 
   const downloadTemplate = () => {
-    const sample = [
-      {
-        'Tên doanh nghiệp': 'Công ty TNHH Thương Mại Mẫu',
-        'Mã số thuế': '0402199999',
-        'Loại hình': 'TNHH 1 thành viên',
-        'Người đại diện': 'Nguyễn Văn A',
-        'Số điện thoại': '0905123456',
-        Email: 'lienhe@congtymau.vn',
-        'Địa chỉ trụ sở': '100 Nguyễn Văn Linh, Hải Châu, Đà Nẵng',
-        'Ngành nghề': 'Thương mại dịch vụ',
-        'Ghi chú': 'Import từ Excel'
-      }
-    ]
-    const ws = XLSX.utils.json_to_sheet(sample)
+    const sampleRow: Record<string, string> = {
+      'No.': '1',
+      'Doanh nghiệp': 'CÔNG TY TNHH MẪU BÔNG SEN',
+      'Số định danh': '048090001234',
+      MST: '0402199999-ql',
+      PIC: 'Nhi',
+      'Trạng thái': 'Đang hoạt động',
+      'Chủ DN': 'Nguyễn Văn A',
+      SĐT: '0905123456',
+      'Địa chỉ': '100 Nguyễn Văn Linh, Đà Nẵng',
+      'Ghi chú': ''
+    }
+    for (const col of customColumns) {
+      sampleRow[col.label] = ''
+    }
+    const ws = XLSX.utils.json_to_sheet([sampleRow])
     const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, ws, 'KhachHang')
+    XLSX.utils.book_append_sheet(wb, ws, 'NHI_BCT')
     XLSX.writeFile(wb, 'Mau_Import_KhachHang_BongSen.xlsx')
   }
 
@@ -215,14 +251,14 @@ export function ImportCustomersDialog({
             Import Khách hàng từ Excel / Google Sheets
           </DialogTitle>
           <DialogDescription>
-            Tải file mẫu Excel hoặc dán link Google Sheets (chế độ chia sẻ công khai chỉ đọc) để nhập hàng loạt vào PostgreSQL.
+            Hỗ trợ chuẩn cột Sheet Nhi_BCT (No., Doanh nghiệp, Số định danh, MST, PIC, Trạng thái, Chủ DN, SĐT) và các cột tùy chỉnh.
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-slate-50 border border-slate-200 p-3">
             <div className="text-xs text-slate-600">
-              Cột bắt buộc: <strong>Tên doanh nghiệp</strong>. Các cột khác: Mã số thuế, Loại hình, Người đại diện, Số điện thoại, Email, Địa chỉ trụ sở, Ngành nghề, Ghi chú.
+              Cột bắt buộc: <strong>Doanh nghiệp</strong> (hoặc Tên doanh nghiệp). Các cột khác: No., Số định danh, MST, PIC, Trạng thái, Chủ DN, SĐT, Địa chỉ, Ghi chú.
             </div>
             <Button type="button" size="sm" variant="outline" onClick={downloadTemplate}>
               <Download className="h-3.5 w-3.5" /> Tải file mẫu (.xlsx)
@@ -277,21 +313,23 @@ export function ImportCustomersDialog({
                 <table className="w-full text-xs text-left">
                   <thead className="bg-slate-50 border-b text-slate-500">
                     <tr>
-                      <th className="px-3 py-2">#</th>
-                      <th className="px-3 py-2">Tên doanh nghiệp</th>
+                      <th className="px-3 py-2">No.</th>
+                      <th className="px-3 py-2">Doanh nghiệp</th>
+                      <th className="px-3 py-2">Số định danh</th>
                       <th className="px-3 py-2">MST</th>
-                      <th className="px-3 py-2">SĐT</th>
-                      <th className="px-3 py-2">Đại diện</th>
+                      <th className="px-3 py-2">PIC</th>
+                      <th className="px-3 py-2">Trạng thái</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {parsedRows.slice(0, 50).map((r, idx) => (
                       <tr key={idx}>
-                        <td className="px-3 py-1.5 text-slate-400">{idx + 1}</td>
+                        <td className="px-3 py-1.5 text-slate-400">{r.sheet_no || idx + 1}</td>
                         <td className="px-3 py-1.5 font-medium text-slate-900">{r.company_name}</td>
+                        <td className="px-3 py-1.5 font-mono">{r.identity_number || '—'}</td>
                         <td className="px-3 py-1.5 font-mono">{r.tax_code || '—'}</td>
-                        <td className="px-3 py-1.5">{r.phone || '—'}</td>
-                        <td className="px-3 py-1.5">{r.legal_representative || '—'}</td>
+                        <td className="px-3 py-1.5">{r.pic_name || '—'}</td>
+                        <td className="px-3 py-1.5">{r.operating_status || '—'}</td>
                       </tr>
                     ))}
                   </tbody>

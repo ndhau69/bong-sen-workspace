@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Badge } from '@/components/ui/badge'
-import type { CaseDocument, CaseStep, Customer, ServiceCase } from '@/types/database'
+import type { CaseDocument, CaseStep, Customer, CustomerColumnConfig, ServiceCase } from '@/types/database'
 
 export function CustomerDetailPage() {
   const { id } = useParams<{ id: string }>()
@@ -25,6 +25,19 @@ export function CustomerDetailPage() {
         .single()
       if (error) throw error
       return data as Customer
+    }
+  })
+
+  const { data: customColumns = [] } = useQuery({
+    queryKey: ['customer-custom-columns-detail'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('customer_column_configs')
+        .select('*')
+        .eq('is_system', false)
+        .order('sort_order', { ascending: true })
+      if (error) throw error
+      return data as CustomerColumnConfig[]
     }
   })
 
@@ -87,13 +100,27 @@ export function CustomerDetailPage() {
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl font-bold text-slate-900">{customer.company_name}</h1>
+              {customer.sheet_no && <Badge variant="secondary">No. {customer.sheet_no}</Badge>}
               <Badge variant="outline">{customer.customer_code}</Badge>
+              {customer.operating_status && (
+                <Badge
+                  variant="outline"
+                  className={
+                    customer.operating_status.toLowerCase().includes('ngưng')
+                      ? 'bg-rose-50 text-rose-700 border-rose-200'
+                      : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                  }
+                >
+                  {customer.operating_status}
+                </Badge>
+              )}
             </div>
             <p className="text-xs text-slate-500 mt-0.5">
               MST: <span className="font-mono font-semibold">{customer.tax_code || '—'}</span> •{' '}
-              {BUSINESS_TYPE_LABELS[customer.business_type]}
+              Số định danh: <span className="font-mono font-semibold">{customer.identity_number || '—'}</span> •{' '}
+              PIC: <span className="font-semibold text-slate-700">{customer.pic_name || '—'}</span>
             </p>
           </div>
         </div>
@@ -111,14 +138,22 @@ export function CustomerDetailPage() {
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div>
-              <span className="text-slate-400">Người đại diện pháp luật:</span>
+              <span className="text-slate-400">Chủ DN / Đại diện PL:</span>
               <div className="font-semibold text-slate-900 mt-0.5">{customer.legal_representative || '—'}</div>
             </div>
             <div>
-              <span className="text-slate-400">Nhân viên phụ trách:</span>
+              <span className="text-slate-400">PIC phụ trách:</span>
               <div className="font-semibold text-slate-900 mt-0.5">
-                {customer.assigned_staff?.full_name || 'Chưa phân công'}
+                {customer.pic_name || customer.assigned_staff?.full_name || 'Chưa phân công'}
               </div>
+            </div>
+            <div>
+              <span className="text-slate-400">Số định danh (CCCD):</span>
+              <div className="font-mono font-semibold text-slate-900 mt-0.5">{customer.identity_number || '—'}</div>
+            </div>
+            <div>
+              <span className="text-slate-400">Loại hình DN:</span>
+              <div className="font-medium text-slate-900 mt-0.5">{BUSINESS_TYPE_LABELS[customer.business_type]}</div>
             </div>
             <div className="flex items-center gap-2">
               <Phone className="h-3.5 w-3.5 text-slate-400" />
@@ -140,6 +175,14 @@ export function CustomerDetailPage() {
               <span className="text-slate-400">Ngành nghề:</span>{' '}
               <span className="text-slate-800">{customer.business_lines || '—'}</span>
             </div>
+            {customColumns.map((col) => (
+              <div key={col.id}>
+                <span className="text-slate-400">{col.label}:</span>{' '}
+                <span className="text-slate-800 font-medium">
+                  {customer.custom_fields?.[col.column_key] || '—'}
+                </span>
+              </div>
+            ))}
           </CardContent>
         </Card>
 
